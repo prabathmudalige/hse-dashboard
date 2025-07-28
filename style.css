@@ -2,16 +2,16 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #0f172a; /* Darker, more professional blue-grey background */
+    background-color: #171923; /* Very dark blue-grey background */
     color: #e2e8f0; /* Soft white text for better readability on dark background */
 }
 
 .card {
-    background-color: #1e293b; /* Slightly lighter dark blue-grey for cards */
+    background-color: #2d3748; /* Dark blue-grey for cards */
     border-radius: 0.75rem; /* Consistent rounded corners */
     padding: 1.5rem;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* More pronounced, deeper shadow */
-    border: 1px solid #334155; /* Subtle, darker border */
+    border: 1px solid #64748b; /* Subtle, slate grey border */
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     height: 100%;
     display: flex;
@@ -49,7 +49,7 @@ h1, h2 {
 .body-map-container svg {
     width: 100%;
     height: 100%;
-    fill: #334155; /* Darker body fill */
+    fill: #4a5568; /* Medium dark blue-grey for body fill */
     stroke: #64748b; /* Subtle outline */
     stroke-width: 1;
 }
@@ -109,8 +109,8 @@ input[type="number"],
 input[type="date"],
 textarea,
 select {
-    background-color: #2d3748; /* Darker input background */
-    border: 1px solid #4a5568; /* Slightly lighter border for inputs */
+    background-color: #4a5568; /* Medium dark blue-grey for input background */
+    border: 1px solid #64748b; /* Slightly lighter border for inputs */
     color: #e2e8f0;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -152,7 +152,7 @@ button:active {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Darker overlay */
+    background-color: rgba(23, 25, 35, 0.9); /* Darker overlay using new body background */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -166,7 +166,7 @@ button:active {
     visibility: visible;
 }
 .modal-content {
-    background-color: #1e293b; /* Matches card background */
+    background-color: #2d3748; /* Matches card background */
     padding: 2rem;
     border-radius: 0.75rem;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); /* Stronger shadow */
@@ -176,7 +176,7 @@ button:active {
     position: relative;
     transform: translateY(-30px); /* Starts lower for a smoother entrance */
     transition: transform 0.3s ease;
-    border: 1px solid #334155;
+    border: 1px solid #64748b; /* Matches card border */
 }
 .modal.show .modal-content {
     transform: translateY(0);
@@ -213,20 +213,20 @@ button:active {
 .risk-matrix-table th, .risk-matrix-table td {
     padding: 0.6rem; /* Slightly more padding */
     text-align: center;
-    border: 1px solid #334155; /* Darker border */
+    border: 1px solid #64748b; /* Darker border */
     font-size: 0.875rem;
 }
 .risk-matrix-table th {
-    background-color: #2d3748; /* Darker background for headers */
+    background-color: #4a5568; /* Darker background for headers */
     color: #f8fafc;
     font-weight: 600;
 }
 .risk-matrix-table td {
-    color: #1e293b; /* Dark text for colored cells */
+    color: #f8fafc; /* Light text for colored cells for better contrast */
     font-weight: 700;
 }
 .risk-matrix-table .severity-label {
-    background-color: #2d3748;
+    background-color: #4a5568;
     color: #f8fafc;
     font-weight: 600;
     text-align: left;
@@ -252,14 +252,14 @@ button:active {
 .sop-output, .audit-output, .investigation-output {
     white-space: pre-wrap;
     font-family: 'Inter', monospace;
-    background-color: #2d3748; /* Matches input background */
+    background-color: #4a5568; /* Matches input background */
     padding: 1.2rem; /* More padding */
     border-radius: 0.6rem; /* Slightly more rounded */
     margin-top: 1.5rem; /* More margin */
-    border: 1px solid #4a5568;
+    border: 1px solid #64748b;
     max-height: 450px; /* Slightly increased height */
     overflow-y: auto;
-    color: #cbd5e0; /* Lighter text for output */
+    color: #e2e8f0; /* Lighter text for output */
     font-size: 0.95rem; /* Slightly larger font */
     line-height: 1.6; /* Better line spacing */
 }
