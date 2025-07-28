@@ -1,0 +1,273 @@
+/* style.css */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #121212; /* Deeper dark background */
+    color: #e0e0e0; /* Slightly brighter light text color */
+}
+.card {
+    background-color: #1e1e1e; /* Darker card background */
+    border-radius: 0.75rem; /* More rounded corners */
+    padding: 1.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+    border: 1px solid #333; /* Subtle border */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 100%; /* Ensure cards fill their grid cell vertically */
+    display: flex;
+    flex-direction: column;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+h1, h2 {
+    color: #ffffff; /* Pure white for headings */
+}
+.text-blue-400 { color: #60a5fa; } /* Brighter blue */
+.text-green-400 { color: #4ade80; } /* Brighter green */
+.text-red-400 { color: #f87171; } /* Brighter red */
+
+.chart-container {
+    position: relative;
+    height: 200px; /* Standard height for charts */
+    width: 100%;
+    flex-grow: 1; /* Allow chart container to grow */
+}
+
+/* Custom styles for body map */
+.body-map-container {
+    position: relative;
+    width: 150px; /* Adjust as needed */
+    height: 300px; /* Adjust as needed */
+}
+.body-map-container svg {
+    width: 100%;
+    height: 100%;
+    fill: #333; /* Darker body fill color */
+    stroke: #555; /* Darker body outline color */
+    stroke-width: 1;
+}
+.body-part-indicator {
+    position: absolute;
+    background-color: #ef4444; /* Brighter red highlight */
+    color: white;
+    font-size: 0.8rem; /* Slightly larger font */
+    padding: 0.3rem 0.5rem; /* More padding */
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px; /* Larger size */
+    min-height: 28px; /* Larger size */
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    font-weight: 600;
+}
+.body-part-indicator:hover {
+    transform: scale(1.2); /* More pronounced scale */
+    background-color: #dc2626; /* Darker red on hover */
+}
+/* Specific positions for body parts (adjust as needed based on SVG) */
+.hands-fingers { top: 170px; left: 10px; }
+.eye { top: 35px; left: 65px; }
+.back { top: 120px; right: 10px; }
+.shoulders-arms { top: 100px; left: 5px; }
+.knees { top: 240px; left: 50px; }
+.head { top: 10px; left: 60px; }
+.face { top: 60px; left: 65px; }
+.hips-legs { top: 200px; left: 40px; }
+.neck { top: 80px; left: 65px; }
+.feet-toes { top: 280px; left: 50px; }
+
+/* Message box styles */
+.message-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #22c55e; /* Brighter green for success */
+    color: white;
+    padding: 1rem 1.5rem; /* More padding */
+    border-radius: 0.75rem; /* More rounded */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+    font-weight: 600;
+    animation: fadeInOut 3.5s forwards; /* Slightly longer animation */
+}
+.message-box.show {
+    display: block;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-30px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-30px); }
+}
+
+/* Input and button styles */
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    background-color: #2a2a2a; /* Darker input background */
+    border: 1px solid #444; /* Darker border */
+    color: #e0e0e0;
+    padding: 0.75rem 1rem; /* More padding */
+    border-radius: 0.5rem;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5); /* Blue glow on focus */
+}
+button {
+    background-color: #3b82f6; /* Brighter blue for button */
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    padding: 0.75rem 1.5rem; /* More padding */
+    font-weight: 700; /* Bolder text */
+    letter-spacing: 0.05em; /* Slight letter spacing */
+    border-radius: 0.5rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #2563eb; /* Darker blue on hover */
+    transform: translateY(-1px);
+}
+button:active {
+    transform: translateY(0);
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 600px;
+    color: #e0e0e0;
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    cursor: pointer;
+}
+.clickable-data {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+.clickable-data:hover {
+    color: #93c5fd; /* Lighter blue on hover */
+}
+
+/* Risk Level Colors */
+.risk-low { background-color: #4ade80; } /* Green */
+.risk-medium { background-color: #fbbf24; } /* Amber */
+.risk-high { background-color: #f97316; } /* Orange */
+.risk-extreme { background-color: #ef4444; } /* Red */
+
+/* Risk Matrix Table Styles */
+.risk-matrix-table th, .risk-matrix-table td {
+    padding: 0.5rem;
+    text-align: center;
+    border: 1px solid #333;
+    font-size: 0.875rem; /* sm text */
+}
+.risk-matrix-table th {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    font-weight: 600;
+}
+.risk-matrix-table td {
+    color: #1e1e1e; /* Dark text for colored cells */
+    font-weight: 700;
+}
+.risk-matrix-table .severity-label {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Highlighted Risk Cell Animation */
+.risk-matrix-table td.highlighted-risk {
+    position: relative;
+    z-index: 20; /* Ensure it's on top */
+    animation: riskPulse 1.2s infinite alternate ease-in-out;
+    border: 2px solid white; /* Make border more prominent */
+}
+
+@keyframes riskPulse {
+    0% {
+        box-shadow: 0 0 0px 0px rgba(255, 255, 255, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.9);
+    }
+}
+.sop-output, .audit-output, .investigation-output {
+    white-space: pre-wrap; /* Preserves whitespace and wraps text */
+    font-family: 'Inter', monospace; /* Monospace for code-like output */
+    background-color: #2a2a2a;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    border: 1px solid #444;
+    max-height: 400px; /* Limit height */
+    overflow-y: auto; /* Enable scrolling */
+    color: #c0c0c0;
+    font-size: 0.9rem;
+}
+.loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #60a5fa;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

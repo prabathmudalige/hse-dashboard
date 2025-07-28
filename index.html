@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injury Risk Calculation Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-100">Injury Risk Calculation Dashboard</h1>
+                <p class="text-sm text-gray-400 mt-1">Last Refreshed: <span id="lastRefreshed">13/02/2023 03:04 PM</span></p>
+            </div>
+            <div class="text-xl font-semibold text-gray-100">Rolling 365 Days</div>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Row 1: Injury Risk Assessment & General Data Input -->
+            <div class="lg:col-span-2 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Injury Risk Assessment</h2>
+                <form id="riskAssessmentForm" class="space-y-4">
+                    <div>
+                        <label for="taskDescription" class="block text-sm font-medium text-gray-400 mb-1">Task/Activity Description</label>
+                        <textarea id="taskDescription" name="taskDescription" rows="2" class="mt-1 block w-full" placeholder="e.g., Manual handling of heavy boxes, Working at height"></textarea>
+                    </div>
+                    <div>
+                        <label for="likelihood" class="block text-sm font-medium text-gray-400 mb-1">Likelihood of Harm</label>
+                        <select id="likelihood" name="likelihood" class="mt-1 block w-full">
+                            <option value="1">1 - Rare (unlikely to occur)</option>
+                            <option value="2">2 - Unlikely (could occur, but not expected)</option>
+                            <option value="3">3 - Possible (might occur occasionally)</option>
+                            <option value="4">4 - Likely (will occur frequently)</option>
+                            <option value="5">5 - Almost Certain (expected to occur regularly)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="severity" class="block text-sm font-medium text-gray-400 mb-1">Severity of Harm</label>
+                        <select id="severity" name="severity" class="mt-1 block w-full">
+                            <option value="1">1 - Insignificant (minor first aid)</option>
+                            <option value="2">2 - Minor (medical treatment, minor injury)</option>
+                            <option value="3">3 - Moderate (lost time injury, temporary disability)</option>
+                            <option value="4">4 - Major (permanent disability, life-threatening)</option>
+                            <option value="5">5 - Catastrophic (fatality, multiple fatalities)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="existingControls" class="block text-sm font-medium text-gray-400 mb-1">Existing Controls (Optional)</label>
+                        <textarea id="existingControls" name="existingControls" rows="2" class="mt-1 block w-full" placeholder="e.g., PPE provided, SOPs in place"></textarea>
+                    </div>
+                    <button type="submit" class="w-full">
+                        Calculate Risk
+                    </button>
+                </form>
+
+                <div id="riskResult" class="mt-6 p-4 rounded-lg text-center font-bold text-lg hidden">
+                    Calculated Risk: <span id="riskLevel"></span> (Score: <span id="riskScore"></span>)
+                </div>
+
+                <!-- Risk Matrix Table -->
+                <div class="mt-6">
+                    <h3 class="text-xl font-bold mb-3 text-gray-200">Risk Matrix</h3>
+                    <div class="overflow-x-auto rounded-lg border border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-700 risk-matrix-table">
+                            <thead class="bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Severity \ Likelihood</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">1<br>(Rare)</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">2<br>(Unlikely)</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">3<br>(Possible)</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">4<br>(Likely)</th>
+                                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">5<br>(Almost Certain)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-gray-800 divide-y divide-gray-700" id="riskMatrixBody">
+                                <!-- Rows will be generated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-gray-500 text-xs mt-3">Risk Level: <span class="inline-block w-3 h-3 risk-low rounded-full mr-1"></span>Low (1-4), <span class="inline-block w-3 h-3 risk-medium rounded-full mr-1"></span>Medium (5-9), <span class="inline-block w-3 h-3 risk-high rounded-full mr-1"></span>High (10-15), <span class="inline-block w-3 h-3 risk-extreme rounded-full mr-1"></span>Extreme (16-25)</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">General Data Input</h2>
+                <form id="generalDataForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="inputInjuries" class="block text-sm font-medium text-gray-400 mb-1">New Injuries</label>
+                            <input type="number" id="inputInjuries" name="inputInjuries" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputIncidents" class="block text-sm font-medium text-gray-400 mb-1">New Incidents</label>
+                            <input type="number" id="inputIncidents" name="inputIncidents" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputSignificantIncidents" class="block text-sm font-medium text-gray-400 mb-1">New Sig. Incidents</label>
+                            <input type="number" id="inputSignificantIncidents" name="inputSignificantIncidents" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputFLOs" class="block text-sm font-medium text-gray-400 mb-1">New FLOs</label>
+                            <input type="number" id="inputFLOs" name="inputFLOs" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputCCOs" class="block text-sm font-medium text-gray-400 mb-1">New CCOs</label>
+                            <input type="number" id="inputCCOs" name="inputCCOs" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputPositiveTests" class="block text-sm font-medium text-gray-400 mb-1">New Positive Tests</label>
+                            <input type="number" id="inputPositiveTests" name="inputPositiveTests" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputPeopleTested" class="block text-sm font-medium text-gray-400 mb-1">New People Tested</label>
+                            <input type="number" id="inputPeopleTested" name="inputPeopleTested" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputOpenActions" class="block text-sm font-medium text-gray-400 mb-1">New Open Actions</label>
+                            <input type="number" id="inputOpenActions" name="inputOpenActions" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputOverdueActions" class="block text-sm font-medium text-gray-400 mb-1">New Overdue Actions</label>
+                            <input type="number" id="inputOverdueActions" name="inputOverdueActions" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputOpenedHazards" class="block text-sm font-medium text-gray-400 mb-1">New Opened Hazards</label>
+                            <input type="number" id="inputOpenedHazards" name="inputOpenedHazards" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="inputClosedHazards" class="block text-sm font-medium text-gray-400 mb-1">New Closed Hazards</label>
+                            <input type="number" id="inputClosedHazards" name="inputClosedHazards" class="mt-1 block w-full" value="0" min="0">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full">
+                        Apply Data Updates
+                    </button>
+                </form>
+                <button id="resetData" class="w-full mt-4 bg-gray-600 hover:bg-gray-700">
+                    Reset All Dashboard Data
+                </button>
+            </div>
+
+            <!-- NEW Row 2: Injury Location (wider), Headline Indicators (landscape) -->
+            <div class="lg:col-span-2 card flex flex-col items-center"> <!-- Injury Location -->
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Injury Location</h2>
+                <div class="flex items-start w-full">
+                    <div class="body-map-container mr-4">
+                        <!-- SVG for human body outline -->
+                        <svg viewBox="0 0 150 300" preserveAspectRatio="xMidYMid meet">
+                            <path d="M75,0 C65,0 60,10 60,20 C60,30 65,40 75,40 C85,40 90,30 90,20 C90,10 85,0 75,0 Z" class="head-shape"></path>
+                            <path d="M60,40 C50,50 50,60 60,70 L60,100 L40,120 L45,140 L55,140 L70,100 L85,140 L95,140 L100,120 L80,100 L80,70 C90,60 90,50 80,40 Z" class="torso-shape"></path>
+                            <path d="M60,100 Q50,150 50,180 T60,220 L65,250 L60,280 L70,300 L80,280 L75,250 L80,220 T90,180 Q90,150 80,100 Z" class="legs-shape"></path>
+                            <path d="M50,120 Q40,150 30,170 L20,190 L10,180 L15,160 L25,140 Z" class="left-arm-shape"></path>
+                            <path d="M100,120 Q110,150 120,170 L130,190 L140,180 L135,160 L125,140 Z" class="right-arm-shape"></path>
+                        </svg>
+                        <!-- Injury indicators, adjusted positions for the new SVG -->
+                        <div class="body-part-indicator" data-part="Hands and fingers" style="top: 170px; left: 10px;" id="handsFingersCount">21</div>
+                        <div class="body-part-indicator" data-part="Eye" style="top: 35px; left: 65px;" id="eyeCount">1</div>
+                        <div class="body-part-indicator" data-part="Back" style="top: 120px; right: 10px;" id="backCount">13</div>
+                        <div class="body-part-indicator" data-part="Shoulders and arms" style="top: 100px; left: 5px;" id="shouldersArmsCount">18</div>
+                        <div class="body-part-indicator" data-part="Knees" style="top: 240px; left: 50px;" id="kneesCount">10</div>
+                        <div class="body-part-indicator" data-part="Head" style="top: 10px; left: 60px;" id="headCount">21</div>
+                        <div class="body-part-indicator" data-part="Face" style="top: 60px; left: 65px;" id="faceCount">2</div>
+                        <div class="body-part-indicator" data-part="Hips and legs" style="top: 200px; left: 40px;" id="hipsLegsCount">15</div>
+                        <div class="body-part-indicator" data-part="Neck" style="top: 80px; left: 65px;" id="neckCount">3</div>
+                        <div class="body-part-indicator" data-part="Feet and toes" style="top: 280px; left: 50px;" id="feetToesCount">13</div>
+                    </div>
+                    <div class="flex-1 text-sm" id="injuryLocationList">
+                        <ul class="space-y-2">
+                            <!-- List items will be populated by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: Injuries are most frequently reported for Hands & Fingers and Head. This highlights areas for targeted safety training or equipment improvements.</p>
+            </div>
+
+            <div class="lg:col-span-2 card"> <!-- Headline Indicators -->
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Headline Indicators</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center clickable-data" data-metric="RIFR">
+                        <p class="text-gray-400 text-sm">RIFR</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="rifr">1.85</p>
+                        <p class="text-gray-500 text-sm">Goal: 2.5</p>
+                        <p class="text-gray-600 text-xs mt-1" title="Rate of Injuries per 200,000 hours worked">(Injuries / Hours) * 200,000</p>
+                    </div>
+                    <div class="text-center clickable-data" data-metric="Injuries">
+                        <p class="text-gray-400 text-sm">Injuries</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="injuries">61</p>
+                        <p class="text-gray-500 text-sm">&nbsp;</p>
+                    </div>
+                    <div class="text-center clickable-data" data-metric="AIFR">
+                        <p class="text-gray-400 text-sm">AIFR</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="aifr">5.56</p>
+                        <p class="text-gray-500 text-sm">Goal: 2.5</p>
+                        <p class="text-gray-600 text-xs mt-1" title="Rate of All Incidents per 200,000 hours worked">(Incidents / Hours) * 200,000</p>
+                    </div>
+                    <div class="text-center clickable-data" data-metric="Incidents">
+                        <p class="text-5xl font-extrabold text-blue-400" id="incidents">376</p>
+                        <p class="text-gray-500 text-sm">Significant Incidents: <span id="significantIncidents">5</span></p>
+                    </div>
+                    <div class="text-center col-span-2 clickable-data" data-metric="SIFR">
+                        <p class="text-gray-400 text-sm">SIFR</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="sifr">2.32</p>
+                        <p class="text-gray-500 text-sm">Goal: 2.5</p>
+                        <p class="text-gray-600 text-xs mt-1" title="Rate of Significant Incidents per 200,000 hours worked">(Significant Incidents / Hours) * 200,000</p>
+                    </div>
+                    <div class="text-center col-span-2 clickable-data" data-metric="Hours">
+                        <p class="text-gray-400 text-sm">Hours</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="hours">2,158K</p>
+                        <p class="text-gray-500 text-sm">&nbsp;</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW Row 3: Observations (below Headline), Audits (wider) -->
+            <div class="lg:col-span-2 card"> <!-- Observations - now wider and below Headline Indicators -->
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Observations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="clickable-data" data-metric="FLOs">
+                        <p class="text-gray-400 text-sm">FLOs</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="flos">2304</p>
+                        <p class="text-gray-500 text-sm">Goal: 906</p>
+                    </div>
+                    <div class="clickable-data" data-metric="FLOs Compliance">
+                        <p class="text-gray-400 text-sm">Compliance</p>
+                        <p class="text-3xl font-extrabold text-green-400" id="flosCompliance">97.62%</p>
+                        <p class="text-gray-500 text-sm">Goal: 95.00%</p>
+                        <p class="text-gray-600 text-xs mt-1" title="FLOs Compliance Percentage">(FLOs / FLOs Goal) * 100</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">CCOs</p>
+                        <p class="text-5xl font-extrabold text-blue-400" id="ccos">1262</p>
+                        <p class="text-gray-500 text-sm">Goal: 906</p>
+                    </div>
+                    <div class="clickable-data" data-metric="CCOs Compliance">
+                        <p class="text-gray-400 text-sm">Compliance</p>
+                        <p class="text-3xl font-extrabold text-green-400" id="ccosCompliance">98.62%</p>
+                        <p class="text-gray-500 text-sm">Goal: 95.00%</p>
+                        <p class="text-gray-600 text-xs mt-1" title="CCOs Compliance Percentage">(CCOs / CCOs Goal) * 100</p>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: Both FLOs and CCOs compliance rates are above their respective goals, indicating strong proactive safety engagement. Maintaining these high levels is crucial for continuous improvement.</p>
+            </div>
+
+            <div class="lg:col-span-2 card"> <!-- Audits - now wider -->
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Audits</h2>
+                <div class="chart-container">
+                    <canvas id="auditsChart"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-400">
+                    <span class="inline-block w-3 h-3 bg-blue-400 rounded-full mr-2"></span>Layered Audit
+                    <span class="inline-block w-3 h-3 bg-blue-600 rounded-full ml-4 mr-2"></span>CRSA
+                    <span class="inline-block w-3 h-3 bg-blue-800 rounded-full ml-4 mr-2"></span>Governance
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: Layered Audits represent the largest portion of completed audits, indicating a strong focus on multi-level safety checks. Ensuring a balanced approach across all audit types is important.</p>
+            </div>
+
+            <!-- Remaining cards (Incident and Injury by Quarter, Drug and Alcohol, Actions Open, Hazards, Top Injury Types, Overall Incident Trend) will follow in their original relative positions -->
+            <!-- Row 4 (previously Row 3): Incident and Injury by Quarter & Drug and Alcohol -->
+            <div class="lg:col-span-2 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Incident and Injury by Quarter</h2>
+                <div class="chart-container">
+                    <canvas id="quarterlyIncidentsChart"></canvas>
+                </div>
+                <div class="mt-4 text-gray-400 text-sm">
+                    <span class="inline-block w-3 h-3 bg-blue-400 rounded-full mr-2"></span>Incident
+                    <span class="inline-block w-3 h-3 bg-blue-600 rounded-full ml-4 mr-2"></span>Injury
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: Quarterly trends show fluctuations, with a peak in Q4. This could indicate seasonal risks or increased activity during year-end. Further investigation into specific incidents in Q4 is recommended.</p>
+            </div>
+
+            <div class="lg:col-span-2 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Drug and Alcohol</h2>
+                <div class="chart-container">
+                    <canvas id="drugAlcoholChart"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-400 flex justify-between">
+                    <div>
+                        <span class="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>Non-Negative
+                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full ml-4 mr-2"></span>Positive
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gray-300">Positive Tests: <span class="font-bold text-blue-400" id="positiveTests">7</span></p>
+                        <p class="text-300">People Tested: <span class="font-bold text-blue-400" id="peopleTested">209</span></p>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: The trend of positive tests remains low, indicating the effectiveness of the drug and alcohol program. Continuous monitoring is essential.</p>
+            </div>
+
+            <!-- Row 5 (previously Row 4): Actions Open, Hazards, Top Injury Types -->
+            <div class="lg:col-span-1 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Actions Open</h2>
+                <div class="chart-container">
+                    <canvas id="actionsOpenChart"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-400 flex justify-between">
+                    <div>
+                        <p>Overdue: <span class="font-bold text-red-400" id="overdueActions">82</span></p>
+                        <p>Open: <span class="font-bold text-blue-400" id="openActions">163</span></p>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: A significant number of actions remain open, with a notable portion overdue. Prioritizing the closure of overdue actions is critical to mitigate risks.</p>
+            </div>
+
+            <div class="lg:col-span-1 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Hazards</h2>
+                <div class="chart-container flex justify-center items-center">
+                    <canvas id="hazardsDonutChart" style="max-width: 150px; max-height: 150px;"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-400">
+                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>Controlled within 30 Days
+                    <span class="inline-block w-3 h-3 bg-gray-500 rounded-full ml-4 mr-2"></span>Not Controlled / Closed > 1.4M
+                </div>
+                <div class="text-center mt-2">
+                    <span class="donut-chart-text" id="hazardsPercentage">72%</span>
+                </div>
+                <div class="text-sm text-gray-400 mt-3">
+                    <p>Opened: <span class="font-bold text-blue-400" id="openedHazards">61</span></p>
+                    <p>Closed: <span class="font-bold text-green-400" id="closedHazards">1159</span></p>
+                    <p>Avg. Days Open: <span class="font-bold text-blue-400" id="avgDaysOpen">4</span></p>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: A high percentage of hazards are controlled within 30 days, reflecting effective hazard management. The low average days open is a positive indicator.</p>
+            </div>
+
+            <div class="lg:col-span-2 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Top Injury Types</h2>
+                <div class="chart-container">
+                    <canvas id="topInjuryTypesChart"></canvas>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: Visual representation of the most common injury types, aiding in targeted prevention strategies.</p>
+            </div>
+
+            <!-- Row 6 (previously Row 5): Overall Incident Trend (Full Width) -->
+            <div class="lg:col-span-4 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Overall Incident Trend (Last 12 Months)</h2>
+                <div class="chart-container">
+                    <canvas id="incidentTrendChart"></canvas>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">Analysis: The overall incident trend shows a slight increase in recent months. This warrants a deeper dive into the root causes of incidents during this period to prevent further escalation.</p>
+            </div>
+
+            <!-- NEW SOP Generation Section -->
+            <div class="lg:col-span-4 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">SOP Generator</h2>
+                <form id="sopGeneratorForm" class="space-y-4">
+                    <div>
+                        <label for="sopTitle" class="block text-sm font-medium text-gray-400 mb-1">SOP Title (e.g., Safe Operation of Forklift)</label>
+                        <input type="text" id="sopTitle" name="sopTitle" class="mt-1 block w-full" placeholder="Enter SOP title" value="Safe Operation of Hand Tools">
+                    </div>
+                    <div>
+                        <label for="sopActivity" class="block text-sm font-medium text-gray-400 mb-1">Activity Description</label>
+                        <textarea id="sopActivity" name="sopActivity" rows="2" class="mt-1 block w-full" placeholder="Briefly describe the activity this SOP covers">This SOP covers the safe use, maintenance, and storage of common hand tools to prevent injuries.</textarea>
+                    </div>
+                    <div>
+                        <label for="sopHazards" class="block text-sm font-medium text-gray-400 mb-1">Potential Hazards (comma-separated)</label>
+                        <input type="text" id="sopHazards" name="sopHazards" class="mt-1 block w-full" placeholder="e.g., Pinch points, Falling objects, Chemical exposure" value="Cuts, Punctures, Crushing, Flying debris, Muscle strain">
+                    </div>
+                    <div>
+                        <label for="sopControls" class="block text-sm font-medium text-gray-400 mb-1">Existing Controls (comma-separated)</label>
+                        <input type="text" id="sopControls" name="sopControls" class="mt-1 block w-full" placeholder="e.g., PPE, Lockout/Tagout, Training" value="Gloves, Safety glasses, Proper tool selection, Training, Regular inspections">
+                    </div>
+                    <div>
+                        <label for="sopSteps" class="block text-sm font-medium text-gray-400 mb-1">Key Steps/Procedures (one per line)</label>
+                        <textarea id="sopSteps" name="sopSteps" rows="5" class="mt-1 block w-full" placeholder="1. Prepare area&#10;2. Check equipment&#10;3. Perform task safely">1. Inspect tool before use
+2. Select the right tool for the job
+3. Maintain a firm grip
+4. Work in a well-lit area
+5. Store tools properly after use</textarea>
+                    </div>
+                    <button type="submit" class="w-full" id="generateSOPButton">
+                        Generate SOP
+                        <span id="sopLoadingSpinner" class="loading-spinner hidden"></span>
+                    </button>
+                </form>
+                <div id="sopOutput" class="sop-output hidden">
+                    <!-- Generated SOP will be displayed here -->
+                </div>
+            </div>
+
+            <!-- NEW Audit Sheet Generator Section -->
+            <div class="lg:col-span-4 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Audit Sheet Generator</h2>
+                <form id="auditGeneratorForm" class="space-y-4">
+                    <div>
+                        <label for="auditType" class="block text-sm font-medium text-gray-400 mb-1">Audit Type</label>
+                        <input type="text" id="auditType" name="auditType" class="mt-1 block w-full" placeholder="e.g., Internal Audit, Compliance Audit, Safety Walkthrough" value="Quarterly Safety Compliance Audit">
+                    </div>
+                    <div>
+                        <label for="auditArea" class="block text-sm font-medium text-gray-400 mb-1">Audited Area/Department</label>
+                        <input type="text" id="auditArea" name="auditArea" class="mt-1 block w-full" placeholder="e.g., Warehouse, Production Line A, Office" value="Production Line 3 - Assembly Area">
+                    </div>
+                    <div>
+                        <label for="auditCriteria" class="block text-sm font-medium text-gray-400 mb-1">Audit Criteria (comma-separated)</label>
+                        <input type="text" id="auditCriteria" name="auditCriteria" class="mt-1 block w-full" placeholder="e.g., ISO 45001, Company Policy, Local Regulations" value="Company Safety Policy, Machine Guarding Standards, PPE Usage Guidelines">
+                    </div>
+                    <div>
+                        <label for="auditFindings" class="block text-sm font-medium text-gray-400 mb-1">Key Findings (one per line)</label>
+                        <textarea id="auditFindings" name="auditFindings" rows="3" class="mt-1 block w-full" placeholder="1. Missing PPE in area X&#10;2. Outdated safety signage">1. Several employees observed not wearing safety glasses in designated areas.
+2. Emergency stop button on machine #4 is partially obstructed by stacked materials.
+3. Monthly fire extinguisher checks not consistently documented for the last 3 months.
+4. "Wet Floor" signs not always used immediately after cleaning spills.</textarea>
+                    </div>
+                    <div>
+                        <label for="auditRecommendations" class="block text-sm font-medium text-gray-400 mb-1">Recommendations (one per line)</label>
+                        <textarea id="auditRecommendations" name="auditRecommendations" rows="3" class="mt-1 block w-full" placeholder="1. Provide new PPE&#10;2. Update signage">1. Retrain all production staff on mandatory PPE requirements, focusing on safety glasses.
+2. Clear obstruction around emergency stop button on machine #4 immediately and implement a 5S audit for the area.
+3. Review and reinforce fire extinguisher inspection schedule and documentation process.
+4. Issue more "Wet Floor" signs and train cleaning staff on proper deployment procedures.</textarea>
+                    </div>
+                    <button type="submit" class="w-full" id="generateAuditButton">
+                        Generate Audit Sheet
+                        <span id="auditLoadingSpinner" class="loading-spinner hidden"></span>
+                    </button>
+                </form>
+                <div id="auditOutput" class="audit-output hidden">
+                    <!-- Generated Audit Sheet will be displayed here -->
+                </div>
+            </div>
+
+            <!-- NEW Scenario Prevention / Accident Near Miss Investigation Section -->
+            <div class="lg:col-span-4 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Scenario Prevention / Investigation</h2>
+                <form id="investigationForm" class="space-y-4">
+                    <div>
+                        <label for="eventType" class="block text-sm font-medium text-gray-400 mb-1">Event Type</label>
+                        <select id="eventType" name="eventType" class="mt-1 block w-full">
+                            <option value="accident">Accident</option>
+                            <option value="near miss" selected>Near Miss</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="eventDescription" class="block text-sm font-medium text-gray-400 mb-1">Event Description</label>
+                        <textarea id="eventDescription" name="eventDescription" rows="3" class="mt-1 block w-full" placeholder="Describe what happened, including location, time, and involved parties.">While operating a forklift, the operator nearly collided with a pedestrian who unexpectedly walked into the designated forklift path. The pedestrian was distracted by their phone. No contact was made, but it was a close call.</textarea>
+                    </div>
+                    <div>
+                        <label for="contributingFactors" class="block text-sm font-medium text-gray-400 mb-1">Contributing Factors (comma-separated)</label>
+                        <input type="text" id="contributingFactors" name="contributingFactors" class="mt-1 block w-full" placeholder="e.g., Lack of training, Equipment malfunction, Poor lighting" value="Pedestrian distraction, Inadequate pedestrian awareness of forklift zones, Forklift operator blind spots">
+                    </div>
+                    <button type="submit" class="w-full" id="investigateButton">
+                        Suggest Prevention / Investigation Steps
+                        <span id="investigationLoadingSpinner" class="loading-spinner hidden"></span>
+                    </button>
+                </form>
+                <div id="investigationOutput" class="investigation-output hidden">
+                    <!-- Generated Prevention/Investigation will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Row 7 (previously Row 6): Standards & Guidelines Section (Full Width) -->
+            <div class="lg:col-span-4 card">
+                <h2 class="text-2xl font-bold mb-4 text-gray-200">Standards & Guidelines</h2>
+                <div class="space-y-4">
+                    <div class="clickable-data" data-standard="ISO 45001">
+                        <h3 class="text-xl font-semibold text-blue-400">ISO 45001: Occupational Health and Safety Management Systems</h3>
+                        <p class="text-gray-400 text-sm">An international standard for occupational health and safety management systems. It provides a framework to improve employee safety, reduce workplace risks and create better, safer working conditions.</p>
+                    </div>
+                    <div class="clickable-data" data-standard="ILO Conventions">
+                        <h3 class="text-xl font-semibold text-blue-400">ILO Conventions & Recommendations on OHS</h3>
+                        <p class="text-400 text-sm">The International Labour Organization (ILO) sets international labour standards, including those related to occupational safety and health, through conventions and recommendations.</p>
+                    </div>
+                    <div class="clickable-data" data-standard="OSHA Regulations">
+                        <h3 class="text-xl font-semibold text-blue-400">OSHA Regulations (USA)</h3>
+                        <p class="text-gray-400 text-sm">The Occupational Safety and Health Administration (OSHA) is a large regulatory agency of the United States Department of Labor that originally had federal visitorial powers to inspect and examine workplaces.</p>
+                    </div>
+                    <div class="clickable-data" data-standard="EU OSH Framework Directive">
+                        <h3 class="text-xl font-semibold text-blue-400">EU OSH Framework Directive (89/391/EEC)</h3>
+                        <p class="text-gray-400 text-sm">A foundational piece of European Union legislation on occupational safety and health, establishing general principles for risk prevention and protection of workers.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box"></div>
+
+    <!-- Modal Structure -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" id="closeModal">&times;</button>
+            <h3 class="text-2xl font-bold mb-4" id="modalTitle"></h3>
+            <div id="modalContent" class="text-gray-300 space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
