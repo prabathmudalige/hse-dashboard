@@ -253,11 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
         messageBox.textContent = message;
         messageBox.className = 'message-box show'; // Reset classes
         if (type === 'success') {
-            messageBox.style.backgroundColor = '#22c55e';
+            messageBox.style.backgroundColor = '#48bb78';
         } else if (type === 'error') {
             messageBox.style.backgroundColor = '#ef4444';
         } else if (type === 'info') {
-            messageBox.style.backgroundColor = '#60a5fa'; // Blue for info
+            messageBox.style.backgroundColor = '#63b3ed'; // Blue for info
         }
         setTimeout(() => {
             messageBox.classList.remove('show');
@@ -368,12 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         label: 'Incidents',
                         data: incidentsData,
-                        backgroundColor: '#60a5fa', // Blue
+                        backgroundColor: '#63b3ed', // Blue
                     },
                     {
                         label: 'Injuries',
                         data: injuriesData,
-                        backgroundColor: '#3b82f6', // Darker Blue
+                        backgroundColor: '#4299e1', // Darker Blue
                     }
                 ]
             },
@@ -383,14 +383,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     x: {
                         stacked: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     },
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     }
                 },
                 plugins: {
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dashboardData.audits.governance
         ];
         const labels = ['Layered Audit', 'CRSA', 'Governance'];
-        const colors = ['#60a5fa', '#3b82f6', '#2563eb'];
+        const colors = ['#63b3ed', '#4299e1', '#3182ce']; // Updated blue shades
 
         if (auditsChartInstance) {
             auditsChartInstance.destroy();
@@ -500,14 +500,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         label: 'Positive Tests',
                         data: positiveData,
-                        backgroundColor: '#f87171', // Red for positive
+                        backgroundColor: '#ef4444', // Red for positive
                         order: 2 // Render bars on top
                     },
                     {
                         label: 'People Tested',
                         data: totalTestedData,
                         type: 'line',
-                        borderColor: '#4ade80', // Green for total tested line
+                        borderColor: '#48bb78', // Green for total tested line
                         borderWidth: 2,
                         fill: false,
                         tension: 0.3,
@@ -520,13 +520,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     },
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     }
                 },
                 plugins: {
@@ -577,8 +577,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Open Actions',
                     data: openActionsData,
-                    backgroundColor: '#60a5fa',
-                    hoverBackgroundColor: '#3b82f6'
+                    backgroundColor: '#63b3ed', // Updated blue
+                    hoverBackgroundColor: '#4299e1' // Updated blue
                 }]
             },
             options: {
@@ -586,13 +586,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     },
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     }
                 },
                 plugins: {
@@ -631,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const notControlled = 100 - controlled;
         const data = [controlled, notControlled];
         const labels = ['Controlled within 30 Days', 'Not Controlled'];
-        const colors = ['#4ade80', '#4a5568']; // Green for controlled, grey for rest
+        const colors = ['#48bb78', '#64748b']; // Green for controlled, slate grey for rest
 
         if (hazardsDonutChartInstance) {
             hazardsDonutChartInstance.destroy();
@@ -694,14 +694,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Total Incidents',
                     data: incidentsData,
-                    borderColor: '#60a5fa', // Blue line
-                    backgroundColor: 'rgba(96, 165, 250, 0.2)', // Light blue fill
+                    borderColor: '#63b3ed', // Blue line
+                    backgroundColor: 'rgba(99, 179, 237, 0.2)', // Light blue fill
                     fill: true,
                     tension: 0.4, // Smooth curve
-                    pointBackgroundColor: '#60a5fa',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#60a5fa'
+                    pointBackgroundColor: '#63b3ed',
+                    pointBorderColor: '#f8fafc', // Updated point border color
+                    pointHoverBackgroundColor: '#f8fafc', // Updated point hover background
+                    pointHoverBorderColor: '#63b3ed' // Updated point hover border
                 }]
             },
             options: {
@@ -709,13 +709,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     },
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     }
                 },
                 plugins: {
@@ -759,9 +759,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Generate distinct colors for each bar
         const backgroundColors = [
-            '#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af',
-            '#4ade80', '#22c55e', '#16a34a', '#15803d', '#0f766e',
-            '#fbbf24', '#f97316', '#ea580c', '#c2410c', '#9a3412',
+            '#63b3ed', '#4299e1', '#3182ce', '#2b6cb0', '#2c5282',
+            '#48bb78', '#38a169', '#2f855a', '#276749', '#22543d',
+            '#f6ad55', '#ed8936', '#dd6b20', '#c05621', '#9c4221',
             '#ef4444', '#dc2626', '#b91c1c', '#991b1b', '#7f1d1d'
         ];
         const chartColors = data.map((_, index) => backgroundColors[index % backgroundColors.length]);
@@ -788,12 +788,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     x: {
                         beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     },
                     y: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#e0e0e0' }
+                        grid: { color: '#334155' }, // Updated grid color
+                        ticks: { color: '#e2e8f0' } // Updated tick color
                     }
                 },
                 plugins: {
@@ -1137,7 +1137,7 @@ Ensure the SOP is concise, clear, and actionable.`;
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            const apiKey = ""; // Canvas will automatically provide the API key
+            const apiKey = "AIzaSyBisW_nQRw-oUUCTW_ZNgbnYG10xhKJdlU"; // Your provided API key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -1217,7 +1217,7 @@ Ensure the audit sheet is professional and actionable.`;
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            const apiKey = "";
+            const apiKey = "AIzaSyBisW_nQRw-oUUCTW_ZNgbnYG10xhKJdlU"; // Your provided API key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -1299,7 +1299,7 @@ Focus on learning from the near miss and proactive measures.`;
             let chatHistory = [];
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
-            const apiKey = "";
+            const apiKey = "AIzaSyBisW_nQRw-oUUCTW_ZNgbnYG10xhKJdlU"; // Your provided API key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
